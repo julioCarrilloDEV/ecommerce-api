@@ -1,77 +1,52 @@
 import { Request, Response } from "express";
+import { getFirestore } from "firebase-admin/firestore";
 
-type User = {
-    id: number, 
-    nome: string, 
-    email:string
-}
-let id = 1; 
-let usuarios: User[]= [];
 
 export class UsersController {
-    static getAll(req: Request, res: Response){
-        res.send(usuarios)
+    static async getAll(req: Request, res: Response){
+        const snapshot = await getFirestore().collection("users").get(); //snapshot contém todos os documentos encontrados.
+        const users = snapshot.docs.map(doc => { //map percorre todos os documentos e retorna um array com os dados de cada documento
+            return {
+                id: doc.id,
+                ...doc.data() //adiciona todos os campos do documento (nome, email, etc.).
+            };
+        })
+        res.send(users)
     }
 
-    static getById(req: Request, res: Response){
-        let userId = Number(req.params.id);
-        let user = usuarios.find(user => user.id == userId)
+    static async getById(req: Request, res: Response){
+        let userId = req.params.id;
+        const doc = await getFirestore().collection("users").doc(userId).get(); //.doc(userId).get() → Retorna apenas o documento com o ID especificado
+        let user = {
+            id: doc.id,
+            ...doc.data()
+        }
         res.send(user);
     }
 
-    static save(req: Request, res: Response){
+    static async save(req: Request, res: Response){
         let user = req.body;
-        user.id = id++;
-        usuarios.push(user);
+        const userSalvo = await getFirestore().collection("users").add(user); //Adiciona um usuário no Firestore
         res.send({
-            message: "Usuário adicionado com sucesso"
+            message: `Usuário ${userSalvo.id} salvo com sucesso`
         })
     }
-    /* MINHA SOLUÇÃO
-    static update(req: Request, res:Response){
-        let userid = Number(req.params.id);
-        let user = req.body;
-        let usuarioAlterado = usuarios.find(user => user.id == userid);
-        if (usuarioAlterado) {
-            usuarioAlterado.nome = user.nome;
-            usuarioAlterado.email = user.email;
-            res.send({
-                message: "Usuário alterado com sucesso"
-            })
-        } else {
-            res.status(404).send({
-                message: "Usuário não encontrado"
-            })
-        }
-    }*/
-
-    //SOLUÇÃO DO PROFESSOR
-    static update(req: Request, res:Response){
-        let userid = Number(req.params.id);
-        let user = req.body;
-        let indexOf = usuarios.findIndex((_user: User) => _user.id == userid); //retorna o índice do usuário
-        usuarios[indexOf].nome = user.nome;
-        usuarios[indexOf].email = user.email;
     
+    static update(req: Request, res:Response){
+        let userId = req.params.id;
+        let user = req.body;
+        getFirestore().collection("users").doc(userId).set({ //set() atualiza um documento no Firestore
+            nome: user.nome,
+            email: user.email
+        })
         res.send({
             message: "Usuário alterado com sucesso"
         })
     }
     
-    /* MINHA SOLUÇÃO
-    static delete(req: Request, res: Response){
-        let userid = Number(req.params.id);
-        usuarios = usuarios.filter(user => user.id != userid);
-        res.send({
-            message: "Usuário removido com sucesso"
-        })
-    }*/
-
-    //Solução do professor
-    static delete(req: Request, res: Response){
-        let userid = Number(req.params.id);
-        let indexOf = usuarios.findIndex((_user:User) => _user.id == userid);
-        usuarios.splice(indexOf, 1); //Splice remove um elemento do array a partir de um índice específico e a quantidade de elementos a serem removidos
+    static async delete(req: Request, res: Response){
+        let userId = req.params.id;
+        await getFirestore().collection("users").doc(userId).delete(); //delete() remove um documento do Firestore
         res.send({
             message: "Usuário removido com sucesso"
         })
