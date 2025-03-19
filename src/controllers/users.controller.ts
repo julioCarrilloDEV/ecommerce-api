@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { getFirestore } from "firebase-admin/firestore";
-import { ValidationError } from "../errors/validation.error";
 import { NotFoundError } from "../errors/not-found.error";
 
 
@@ -37,9 +36,6 @@ export class UsersController {
     static async save(req: Request, res: Response, next: NextFunction){
         try {
             let user = req.body;
-            if (!user.email || user.email === ""){
-                throw new ValidationError("O campo email é obrigatório");
-            }
             const userSalvo = await getFirestore().collection("users").add(user); //Adiciona um usuário no Firestore
             res.send({
                 message: `Usuário ${userSalvo.id} salvo com sucesso`
