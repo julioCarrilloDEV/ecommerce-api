@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { getFirestore } from "firebase-admin/firestore";
+import { ValidationError } from "../errors/validation.error";
+import { NotFoundError } from "../errors/not-found.error";
 
 
 export class UsersController {
@@ -19,22 +21,25 @@ export class UsersController {
     }
 
     static async getById(req: Request, res: Response, next: NextFunction){
-        try {
-            let userId = req.params.id;
-            const doc = await getFirestore().collection("users").doc(userId).get(); //.doc(userId).get() → Retorna apenas o documento com o ID especificado
+        let userId = req.params.id;
+        const doc = await getFirestore().collection("users").doc(userId).get(); //.doc(userId).get() → Retorna apenas o documento com o ID especificado
+        if (doc.exists){
             let user = {
                 id: doc.id,
                 ...doc.data()
             }
             res.send(user);
-        } catch (error) {
-            next(error);
+        }else{
+            throw new NotFoundError("Usuário não encontrado");
         }
     }
 
     static async save(req: Request, res: Response, next: NextFunction){
         try {
             let user = req.body;
+            if (!user.email || user.email === ""){
+                throw new ValidationError("O campo email é obrigatório");
+            }
             const userSalvo = await getFirestore().collection("users").add(user); //Adiciona um usuário no Firestore
             res.send({
                 message: `Usuário ${userSalvo.id} salvo com sucesso`
@@ -44,17 +49,22 @@ export class UsersController {
         }
     }
     
-    static update(req: Request, res:Response, next: NextFunction){
+    static async update(req: Request, res:Response, next: NextFunction){
         try {
             let userId = req.params.id;
             let user = req.body;
-            getFirestore().collection("users").doc(userId).set({ //set() atualiza um documento no Firestore
-                nome: user.nome,
-                email: user.email
-            })
-            res.send({
-                message: "Usuário alterado com sucesso"
-            })
+            let docReferece = getFirestore().collection("users").doc(userId);
+            if ((await docReferece.get()).exists){
+                await docReferece.set({ //set() atualiza um documento no Firestore
+                    nome: user.nome,
+                    email: user.email
+                })
+                res.send({
+                    message: "Usuário alterado com sucesso"
+                })
+            }else{
+                throw new NotFoundError("Usuário não encontrado");
+            }
         } catch (error) {
             next(error);
         }
