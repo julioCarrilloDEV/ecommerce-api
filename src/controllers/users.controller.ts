@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { UsersService } from "../services/users.service";
 import { User } from "../models/user.model";
 
-
+//Controller é responsável por receber as requisições HTTP e chamar os métodos da camada de serviço
 export class UsersController {
     static async getAll(req: Request, res: Response, next: NextFunction){
         try{
