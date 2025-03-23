@@ -1,6 +1,6 @@
 # API RESTful com Node.js, TypeScript e Firebase
 
-Esta é uma API RESTful desenvolvida em Node.js com TypeScript e Express, utilizando o Firebase como banco de dados e seguindo uma arquitetura em camadas. O projeto foi criado durante um treinamento e já implementa as principais operações de CRUD para gerenciamento de usuários.
+Esta é uma API RESTful desenvolvida em Node.js com TypeScript e Express, utilizando o Firebase como banco de dados e seguindo uma arquitetura em camadas. O projeto foi criado durante um treinamento do professor Derci Santos, na Udemy, e já implementa as principais operações de CRUD para gerenciamento de usuários.
 
 ## Tecnologias Utilizadas
 
@@ -28,25 +28,25 @@ Esta é uma API RESTful desenvolvida em Node.js com TypeScript e Express, utiliz
 ## Como Executar
 
 1. **Clone o repositório:**
-   ```bash```
-   git clone https://github.com/seu-usuario/nome-do-repositorio.git
-   cd nome-do-repositorio
+   ```bash
+   git clone https://github.com/julioCarrilloDEV/ecommerce-api.git
+   cd ecommerce-api
 2. **Instale as dependências:**
-    ```bash```
+    ```bash
     npm install
 3. **Configure as variáveis de ambiente:**
     - Crie um arquivo .env na raiz do projeto e adicione:
-    ```ini```
+    ```ini
     GOOGLE_APPLICATION_CREDENTIALS=firebase-archiveconfig.json
+    ```
     - Certifique-se de que o arquivo de credenciais do Firebase esteja disponível.
 4. **Compile e execute a aplicação:**
-    ```bash```
+    ```bash
     npm run start
-
 
 **A aplicação estará rodando na porta 3001.**
 
-**Considerações**
+## Considerações
 - A aplicação utiliza middlewares para tratar erros e rotas não encontradas, garantindo respostas padronizadas.
 - A validação de dados é feita com Celebrate para garantir que as requisições contenham os campos esperados.
 - A arquitetura em camadas facilita a manutenção e a evolução do projeto, separando responsabilidades entre Controllers, Services e Repositories.
