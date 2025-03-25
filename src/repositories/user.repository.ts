@@ -27,6 +27,7 @@ export class UserRepository{
     }
 
     async save(user: User){
+        delete user.password; //Não salva a senha no Firestore, apenas no Firebase Authentication
         await getFirestore().collection("users").add(user); //Adiciona um usuário no Firestore
     }
 
