@@ -38,6 +38,7 @@ Esta é uma API RESTful desenvolvida em Node.js com TypeScript e Express, utiliz
     - Crie um arquivo .env na raiz do projeto e adicione:
     ```ini
     GOOGLE_APPLICATION_CREDENTIALS=firebase-archiveconfig.json
+    FIRE_API_KEY = sua_api_key
     ```
     - Certifique-se de que o arquivo de credenciais do Firebase esteja disponível.
 4. **Compile e execute a aplicação:**
