@@ -14,4 +14,14 @@ export class AuthController{
             next(error);
         }
     }
+
+    static async recovery(req: Request, res: Response, next: NextFunction){
+        try {
+            const {email} = req.body;
+            new AuthService().recovery(email);
+            res.end();
+        } catch (error) {
+            next(error);
+        }
+    }
 }
